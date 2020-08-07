@@ -32,13 +32,13 @@ class MainFragment : Fragment() {
     private fun setupButtons() {
         binding.newButton.setOnClickListener {
             GameRepository.get().clearGame()
-            findNavController().navigate(R.id.main_to_game)
+            findNavController().navigate(MainFragmentDirections.mainToGame())
         }
         binding.resumeButton.setOnClickListener {
-            findNavController().navigate(R.id.main_to_game)
+            findNavController().navigate(MainFragmentDirections.mainToGame())
         }
         binding.rankingButton.setOnClickListener {
-            findNavController().navigate(R.id.main_to_ranking)
+            findNavController().navigate(MainFragmentDirections.mainToRanking())
         }
     }
 }
