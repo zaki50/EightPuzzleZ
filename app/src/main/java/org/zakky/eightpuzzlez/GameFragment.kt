@@ -24,7 +24,7 @@ class GameFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
         if (savedInstanceState == null) {
-            viewModel.puzzle = EightPuzzle.newInstance().let { it.shuffle(Random.Default) }
+            viewModel.puzzle = EightPuzzle.newInstance().shuffle(Random.Default)
         }
     }
 
@@ -59,12 +59,29 @@ class GameFragment : Fragment() {
         for (index in 0 until panels.size) {
             val num = board[index]
             panels[index].setImageDrawable(images[num])
-            panels[index].setOnClickListener { v: View ->
+            panels[index].setOnClickListener {
                 val (puzzle, direction) = viewModel.puzzle.move(index)
                 direction?.let {
                     panels[index].setImageDrawable(images[0])
-                    panels[index + direction.offset].setImageDrawable(images[puzzle.numberAt(index + direction.offset)])
-                    viewModel.puzzle = puzzle
+                    panels[index + direction.offset].let { moveTargetPanel ->
+                        moveTargetPanel.setImageDrawable(images[puzzle.numberAt(index + direction.offset)])
+                        when (direction) {
+                            EightPuzzle.MoveDirection.UP -> {
+                                animateVertically(panels[index], moveTargetPanel)
+                            }
+                            EightPuzzle.MoveDirection.DOWN -> {
+                                animateVertically(panels[index], moveTargetPanel)
+                            }
+                            EightPuzzle.MoveDirection.LEFT -> {
+                                animateHorizontally(panels[index], moveTargetPanel)
+                            }
+                            EightPuzzle.MoveDirection.RIGHT -> {
+                                animateHorizontally(panels[index], moveTargetPanel)
+                            }
+                        }
+
+                        viewModel.puzzle = puzzle
+                    }
                 }
             }
         }
@@ -77,7 +94,7 @@ class GameFragment : Fragment() {
 
     companion object {
         private val NUM_IMAGE_IDS = intArrayOf(
-            R.mipmap.blank,
+            R.mipmap.transparent,
             R.mipmap.num1,
             R.mipmap.num2,
             R.mipmap.num3,
@@ -87,5 +104,33 @@ class GameFragment : Fragment() {
             R.mipmap.num7,
             R.mipmap.num8,
         )
+
+        private fun animateVertically(originPanel: View, targetPanel: View) {
+            val location = IntArray(2)
+            val targetY = location.let {
+                targetPanel.getLocationInWindow(location)
+                location[1]
+            }
+            val originY = location.let {
+                originPanel.getLocationInWindow(location)
+                location[1]
+            }
+            targetPanel.translationY = (originY - targetY).toFloat()
+            targetPanel.animate().translationY(0f)
+        }
+
+        private fun animateHorizontally(originPanel: View, targetPanel: View) {
+            val location = IntArray(2)
+            val targetX = location.let {
+                targetPanel.getLocationInWindow(location)
+                location[0]
+            }
+            val originX = location.let {
+                originPanel.getLocationInWindow(location)
+                location[0]
+            }
+            targetPanel.translationX = (originX - targetX).toFloat()
+            targetPanel.animate().translationX(0f)
+        }
     }
 }
