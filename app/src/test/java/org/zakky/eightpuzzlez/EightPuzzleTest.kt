@@ -1,7 +1,6 @@
 package org.zakky.eightpuzzlez
 
-import org.junit.Assert.assertArrayEquals
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 
 class EightPuzzleTest {
@@ -99,6 +98,19 @@ class EightPuzzleTest {
 
         assertEquals(1, target.historySize)
         assertArrayEquals(intArrayOf(6, 2, 8, 4, 0, 5, 1, 7, 3), targetBoard)
+    }
+
+    @Test
+    fun isCleared() {
+        val target = EightPuzzle.newInstance()
+        assertTrue(target.isCleared())
+    }
+
+    @Test
+    fun isCleared_notCleared() {
+        val board = intArrayOf(6, 2, 8, 4, 0, 5, 1, 7, 3)
+        val target = EightPuzzle.newInstanceWithState(board, intArrayOf(5))
+        assertFalse(target.isCleared())
     }
 
 }
