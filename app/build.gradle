@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 apply plugin: 'ext-properties'
@@ -71,6 +72,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     androidTestImplementation "androidx.navigation:navigation-testing:$versions.navigation"
+
+    implementation("com.squareup.moshi:moshi:$versions.moshi")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi")
 
     testImplementation "junit:junit:$versions.junit"
     androidTestImplementation "androidx.test.ext:junit:$versions.androidxJunit"

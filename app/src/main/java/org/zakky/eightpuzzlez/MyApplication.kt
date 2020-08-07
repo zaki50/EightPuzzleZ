@@ -8,5 +8,6 @@ class MyApplication : Application() {
         super.onCreate()
 
         GameRepository.init(this)
+        RankingRepository.init(this)
     }
 }

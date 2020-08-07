@@ -103,6 +103,7 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
 
                         if (puzzle.isCleared()) {
                             GameRepository.get().clearGame()
+                            RankingRepository.get().add(Ranking(puzzle.historySize, System.currentTimeMillis()))
                             ResultDialogFragment().also {
                                 it.setTargetFragment(this, -1)
                             }.show(parentFragmentManager, "dialog")
