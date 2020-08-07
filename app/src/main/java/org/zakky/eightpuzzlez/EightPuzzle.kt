@@ -184,14 +184,14 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         }
 
         private fun distanceOfBlank(board: IntArray): Int {
-            val indexOfEmpty = board.indexOf(0)
-            val horizontalDistance = when (indexOfEmpty % 3) {
+            val indexOfBlank = board.indexOf(0)
+            val horizontalDistance = when (indexOfBlank % 3) {
                 0 -> 2
                 1 -> 1
                 2 -> 0
                 else -> 0
             }
-            val verticalDistance = when (indexOfEmpty / 3) {
+            val verticalDistance = when (indexOfBlank / 3) {
                 0 -> 2
                 1 -> 1
                 2 -> 0
