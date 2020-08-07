@@ -17,7 +17,7 @@ class EightPuzzleTest {
 
     @Test
     fun newInstanceWithState_emptyHistory() {
-        val board = intArrayOf(0, 2, 8, 4, 6, 5, 1, 3, 7,)
+        val board = intArrayOf(0, 2, 8, 4, 6, 5, 1, 3, 7)
 
         val target = EightPuzzle.newInstanceWithState(board, intArrayOf())
 

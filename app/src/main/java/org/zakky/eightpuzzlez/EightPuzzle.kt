@@ -62,7 +62,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
     }
 
     fun isCleared(): Boolean {
-        for(index in 0 until board.size - 1 /* 最後の要素は確認不要 */) {
+        for (index in 0 until board.size - 1 /* 最後の要素は確認不要 */) {
             if (board[index] != index + 1) {
                 return false
             }
