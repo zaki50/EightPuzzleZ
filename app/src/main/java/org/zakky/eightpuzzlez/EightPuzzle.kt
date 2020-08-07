@@ -28,8 +28,12 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
 
     fun shuffle(random: Random): EightPuzzle {
         val newBoard = board.toMutableList()
-        newBoard.shuffle(random)
-        return EightPuzzle(newBoard.toIntArray(), intArrayOf())
+        var newBoardArray: IntArray
+        do {
+            newBoard.shuffle(random)
+            newBoardArray = newBoard.toIntArray()
+        } while (!canClear(newBoardArray))
+        return EightPuzzle(newBoardArray, intArrayOf())
     }
 
     fun move(index: Int): Pair<EightPuzzle, MoveDirection?> {
@@ -105,8 +109,8 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
                 }
                 seen[item] = true
             }
-            // 重複があれば上のfor文でreturn falseしているはずなので無条件にtrueを返して良い
-            return true
+            // ここにくれば数字の過不足はない
+            return canClear(board)
         }
 
         private fun isValidHistory(history: IntArray, originalBoard: IntArray): Boolean {
@@ -149,6 +153,51 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
                     board[index] = 0
                 }
             }
+        }
+
+        /**
+         * クリア可能な盤面かどうかの判定
+         *
+         * 置換の偶奇とblankの最終位置までの距離の偶奇が一致していればクリア可能
+         *
+         * 参考: https://mathtrain.jp/8puzzle
+         */
+        private fun canClear(board: IntArray): Boolean {
+            val copy = board.copyOf()
+            var swapCount = 0
+            for (index in 0 until board.size - 1) {
+                val num = index + 1
+                val indexOfNum = copy.indexOf(num)
+                if (index != indexOfNum) {
+                    swap(copy, index, indexOfNum)
+                    swapCount++
+                }
+            }
+            return swapCount % 2 == distanceOfBlank(board) % 2
+        }
+
+        private fun swap(board: IntArray, index0: Int, index1: Int) {
+            val val0 = board[index0]
+            val val1 = board[index1]
+            board[index0] = val1
+            board[index1] = val0
+        }
+
+        private fun distanceOfBlank(board: IntArray): Int {
+            val indexOfEmpty = board.indexOf(0)
+            val horizontalDistance = when (indexOfEmpty % 3) {
+                0 -> 2
+                1 -> 1
+                2 -> 0
+                else -> 0
+            }
+            val verticalDistance = when (indexOfEmpty / 3) {
+                0 -> 2
+                1 -> 1
+                2 -> 0
+                else -> 0
+            }
+            return horizontalDistance + verticalDistance
         }
     }
 }
