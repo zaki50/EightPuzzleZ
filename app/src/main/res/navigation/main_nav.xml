@@ -9,7 +9,7 @@
         android:id="@+id/mainFragment"
         android:name="org.zakky.eightpuzzlez.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" >
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/main_to_game"
             app:destination="@id/gameFragment" />
@@ -21,7 +21,7 @@
         android:id="@+id/gameFragment"
         android:name="org.zakky.eightpuzzlez.GameFragment"
         android:label="game_fragment"
-        tools:layout="@layout/fragment_game" >
+        tools:layout="@layout/fragment_game">
         <action
             android:id="@+id/action_gameFragment_to_rankingFragment"
             app:destination="@id/rankingFragment" />
