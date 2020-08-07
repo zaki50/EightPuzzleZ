@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 class GameRepository(private val pref: SharedPreferences) {
 
     fun saveGame(puzzle: EightPuzzle) {
-        val board = intArrayOf(EightPuzzle.PANEL_COUNT)
+        val board = IntArray(EightPuzzle.PANEL_COUNT)
         puzzle.fillBoardState(board)
 
         val boardBuilder = StringBuilder(board.size)
@@ -19,7 +19,7 @@ class GameRepository(private val pref: SharedPreferences) {
         }
         pref.edit()
             .putString(KEY_BOARD, boardBuilder.toString())
-            .putString(KEY_MOVE_HISTORY, boardBuilder.toString())
+            .putString(KEY_MOVE_HISTORY, historyBuilder.toString())
             .apply()
     }
 

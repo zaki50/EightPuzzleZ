@@ -24,7 +24,14 @@ class GameFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
         if (savedInstanceState == null) {
-            viewModel.puzzle = EightPuzzle.newInstance().shuffle(Random.Default)
+            viewModel.puzzle = if (GameRepository.get().hasSavedGame()) {
+                GameRepository.get().loadGame()
+            } else {
+                EightPuzzle.newInstance().shuffle(Random.Default).also {
+                    // onPause() でも保存するが、backした際のMainFragment の onResume() に間に合わないのでここでも保存しておく
+                    GameRepository.get().saveGame(viewModel.puzzle)
+                }
+            }
         }
     }
 
@@ -90,6 +97,12 @@ class GameFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        GameRepository.get().saveGame(viewModel.puzzle)
     }
 
     companion object {
