@@ -22,6 +22,13 @@ class MainFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        binding.resumeButton.isEnabled = GameRepository.get().hasSavedGame()
+        binding.rankingButton.isEnabled = RankingRepository.get().hasRankingData()
+    }
+
     private fun setupButtons() {
         binding.newButton.setOnClickListener {
             findNavController().navigate(R.id.main_to_game)
