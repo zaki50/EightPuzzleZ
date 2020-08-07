@@ -52,7 +52,7 @@ class GameRepository(private val pref: SharedPreferences) {
         fun get() = instance
 
         private fun parseBoardString(boardStr: String?): IntArray {
-            if (boardStr == null || boardStr.length != 9) {
+            if (boardStr == null || boardStr.length != EightPuzzle.PANEL_COUNT) {
                 return intArrayOf()
             }
             return boardStr.toCharArray().map { it - '0' }.toIntArray()
