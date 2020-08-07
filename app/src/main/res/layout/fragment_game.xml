@@ -1,16 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".GameFragment">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="ゲーム" />
+        <!-- アニメーションしたときにブランクパネルが見えるようにするための背景 -->
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </FrameLayout>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:layout_margin="1dp"
+                    android:src="@mipmap/blank"
+                    tools:ignore="ContentDescription" />
+            </TableRow>
+        </TableLayout>
+
+        <!-- ユーザーの操作に反応して数字を表示するパネル -->
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/panel0"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num1" />
+
+                <ImageView
+                    android:id="@+id/panel1"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num2" />
+
+                <ImageView
+                    android:id="@+id/panel2"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num3" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/panel3"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num4" />
+
+                <ImageView
+                    android:id="@+id/panel4"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num5" />
+
+                <ImageView
+                    android:id="@+id/panel5"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num6" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/panel6"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num7" />
+
+                <ImageView
+                    android:id="@+id/panel7"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/num8" />
+
+                <ImageView
+                    android:id="@+id/panel8"
+                    android:layout_margin="1dp"
+                    tools:ignore="ContentDescription"
+                    tools:src="@mipmap/blank" />
+            </TableRow>
+        </TableLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -10,17 +10,17 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
     val historyIterator: IntIterator
         get() = history.iterator()
 
-    enum class MoveDirection {
-        UP,
-        DOWN,
-        RIGHT,
-        LEFT,
+    enum class MoveDirection(val offset: Int) {
+        UP(-3),
+        DOWN(3),
+        RIGHT(1),
+        LEFT(-1),
     }
 
     fun numberAt(index: Int): Int = board[index]
 
     fun fillBoardState(to: IntArray) {
-        if (to.size != PANEL_COUNT + 1) {
+        if (to.size != PANEL_COUNT) {
             throw java.lang.IllegalArgumentException("invalid length of target array: ${to.size}")
         }
         board.copyInto(to)
@@ -28,8 +28,19 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
 
     fun shuffle(random: Random): EightPuzzle {
         val newBoard = board.toMutableList()
-        newBoard.shuffle()
+        newBoard.shuffle(random)
         return EightPuzzle(newBoard.toIntArray(), intArrayOf())
+    }
+
+    fun move(index: Int): Pair<EightPuzzle, MoveDirection?> {
+        val newBoard = board.copyOf()
+        val direction = move(newBoard, index, true) ?: return Pair(this, null)
+
+        return Pair(
+            EightPuzzle(
+                newBoard,
+                history.copyOf(historySize + 1).also { it[historySize] = board[index] }), direction
+        )
     }
 
     fun moveBack(): EightPuzzle {
@@ -47,11 +58,11 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
     }
 
     companion object {
-        const val PANEL_COUNT = 8
+        const val PANEL_COUNT = 9
 
         fun newInstance(): EightPuzzle {
             // board = intArrayOf(1, 2, 3, ..., 0)
-            val board = IntArray(PANEL_COUNT + 1) { index -> (index + 1) % (PANEL_COUNT + 1) }
+            val board = IntArray(PANEL_COUNT) { index -> (index + 1) % PANEL_COUNT }
             val history = intArrayOf()
 
             return EightPuzzle(board, history)
@@ -71,7 +82,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         }
 
         private fun isValidBoard(board: IntArray): Boolean {
-            val seen = BooleanArray(PANEL_COUNT + 1)
+            val seen = BooleanArray(PANEL_COUNT)
 
             if (board.size != seen.size) {
                 return false
@@ -91,7 +102,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
 
         private fun isValidHistory(history: IntArray, originalBoard: IntArray): Boolean {
             for (item in history) {
-                if (item < 1 || PANEL_COUNT < item) {
+                if (item < 1 || PANEL_COUNT <= item) {
                     return false
                 }
             }
@@ -118,10 +129,10 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
             }
             val indexOfEmpty = board.indexOf(0)
             return when (indexOfEmpty - index) {
-                -1 -> MoveDirection.LEFT
-                1 -> MoveDirection.RIGHT
-                -3 -> MoveDirection.UP
-                3 -> MoveDirection.DOWN
+                MoveDirection.LEFT.offset -> MoveDirection.LEFT
+                MoveDirection.RIGHT.offset -> MoveDirection.RIGHT
+                MoveDirection.UP.offset -> MoveDirection.UP
+                MoveDirection.DOWN.offset -> MoveDirection.DOWN
                 else -> null
             }.also {
                 if (updateBoard && it != null) {

@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 class GameRepository(private val pref: SharedPreferences) {
 
     fun saveGame(puzzle: EightPuzzle) {
-        val board = intArrayOf(EightPuzzle.PANEL_COUNT + 1)
+        val board = intArrayOf(EightPuzzle.PANEL_COUNT)
         puzzle.fillBoardState(board)
 
         val boardBuilder = StringBuilder(board.size)

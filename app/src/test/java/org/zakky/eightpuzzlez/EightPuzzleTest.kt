@@ -10,8 +10,8 @@ class EightPuzzleTest {
     fun newInstance() {
         val target = EightPuzzle.newInstance()
 
-        for (index in 0 until EightPuzzle.PANEL_COUNT + 1) {
-            assertEquals((index + 1) % (EightPuzzle.PANEL_COUNT + 1), target.numberAt(index))
+        for (index in 0 until EightPuzzle.PANEL_COUNT) {
+            assertEquals((index + 1) % EightPuzzle.PANEL_COUNT, target.numberAt(index))
         }
         assertEquals(0, target.historySize)
     }
@@ -22,7 +22,7 @@ class EightPuzzleTest {
 
         val target = EightPuzzle.newInstanceWithState(board, intArrayOf())
 
-        for (index in 0 until EightPuzzle.PANEL_COUNT + 1) {
+        for (index in 0 until EightPuzzle.PANEL_COUNT) {
             assertEquals(board[index], target.numberAt(index))
         }
         assertEquals(0, target.historySize)
@@ -78,7 +78,7 @@ class EightPuzzleTest {
         val target = EightPuzzle.newInstanceWithState(board, intArrayOf(5))
 
         val previous = target.moveBack()
-        val previousBoard = IntArray(EightPuzzle.PANEL_COUNT + 1).also {
+        val previousBoard = IntArray(EightPuzzle.PANEL_COUNT).also {
             previous.fillBoardState(it)
         }
 
@@ -93,7 +93,7 @@ class EightPuzzleTest {
         val target = EightPuzzle.newInstanceWithState(board, intArrayOf(5))
 
         target.moveBack()
-        val targetBoard = IntArray(EightPuzzle.PANEL_COUNT + 1).also {
+        val targetBoard = IntArray(EightPuzzle.PANEL_COUNT).also {
             target.fillBoardState(it)
         }
 
