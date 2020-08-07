@@ -21,7 +21,7 @@
         android:id="@+id/gameFragment"
         android:name="org.zakky.eightpuzzlez.GameFragment"
         android:label="game_fragment"
-        tools:layout="@layout/game_fragment" >
+        tools:layout="@layout/fragment_game" >
         <action
             android:id="@+id/action_gameFragment_to_rankingFragment"
             app:destination="@id/rankingFragment" />
