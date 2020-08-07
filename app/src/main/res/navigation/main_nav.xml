@@ -8,23 +8,38 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="org.zakky.eightpuzzlez.MainFragment"
-        android:label="fragment_main"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/main_to_game"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/mainFragment" />
         <action
             android:id="@+id/main_to_ranking"
-            app:destination="@id/rankingFragment" />
+            app:destination="@id/rankingFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
         android:name="org.zakky.eightpuzzlez.GameFragment"
-        android:label="game_fragment"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_game">
         <action
             android:id="@+id/action_gameFragment_to_rankingFragment"
-            app:destination="@id/rankingFragment" />
+            app:destination="@id/rankingFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/rankingFragment"
