@@ -6,12 +6,14 @@ import androidx.databinding.DataBindingUtil
 import org.zakky.eightpuzzlez.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding =
-            DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-
-        setSupportActionBar(binding.toolbar)
+        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).let {
+            binding = it
+            setSupportActionBar(it.toolbar)
+        }
     }
 }

@@ -1,17 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainFragment">
 
-        <!-- TODO: Update blank fragment layout -->
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment" />
+            android:id="@+id/welcome_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="48dp"
+            android:text="@string/hello_puzzle"
+            android:textAlignment="center"
+            android:textSize="@dimen/title_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </FrameLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/begin_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="100dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/end_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="100dp" />
+
+        <Button
+            android:id="@+id/new_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/new_game"
+            app:layout_constraintBottom_toTopOf="@+id/resume_button"
+            app:layout_constraintEnd_toStartOf="@+id/end_line"
+            app:layout_constraintStart_toStartOf="@+id/begin_line"
+            app:layout_constraintTop_toBottomOf="@+id/welcome_message" />
+
+        <Button
+            android:id="@+id/resume_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/resume_game"
+            app:layout_constraintBottom_toTopOf="@+id/ranking_button"
+            app:layout_constraintEnd_toStartOf="@+id/end_line"
+            app:layout_constraintStart_toStartOf="@+id/begin_line"
+            app:layout_constraintTop_toBottomOf="@+id/new_button" />
+
+        <Button
+            android:id="@+id/ranking_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/ranking"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/end_line"
+            app:layout_constraintStart_toStartOf="@+id/begin_line"
+            app:layout_constraintTop_toBottomOf="@+id/resume_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

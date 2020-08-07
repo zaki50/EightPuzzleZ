@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import org.zakky.eightpuzzlez.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -16,7 +17,20 @@ class MainFragment : Fragment() {
     ): View? {
         return FragmentMainBinding.inflate(layoutInflater, container, false).let {
             binding = it
+            setupButtons()
             it.root
+        }
+    }
+
+    private fun setupButtons() {
+        binding.newButton.setOnClickListener {
+            findNavController().navigate(R.id.main_to_game)
+        }
+        binding.resumeButton.setOnClickListener {
+            findNavController().navigate(R.id.main_to_game)
+        }
+        binding.rankingButton.setOnClickListener {
+            findNavController().navigate(R.id.main_to_ranking)
         }
     }
 }
