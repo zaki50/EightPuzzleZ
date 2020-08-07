@@ -5,6 +5,8 @@
     <string name="resume_game">続きから始める</string>
     <string name="ranking">ランキング</string>
 
+    <string name="board_description">ここまで%1$d手</string>
+
     <string name="clear_dialog_title">クリア！</string>
     <string name="clear_dialog_message">おめでとうございます。</string>
 </resources>

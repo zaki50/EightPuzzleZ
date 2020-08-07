@@ -51,8 +51,13 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
         return FragmentGameBinding.inflate(layoutInflater, container, false).let {
             initPanels(it)
             binding = it
+            setBoardDescription()
             it.root
         }
+    }
+
+    private fun setBoardDescription() {
+        binding.boardDescription.text = resources.getString(R.string.board_description, viewModel.puzzle.historySize)
     }
 
     private fun initPanels(binding: FragmentGameBinding) {
@@ -93,6 +98,8 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
                         }
 
                         viewModel.puzzle = puzzle
+
+                        setBoardDescription()
 
                         if (puzzle.isCleared()) {
                             GameRepository.get().clearGame()
