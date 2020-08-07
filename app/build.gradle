@@ -53,6 +53,13 @@ dependencies {
     //noinspection GradleDependency
     implementation "androidx.appcompat:appcompat:$versions.appCompat"
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
+
+    implementation "androidx.navigation:navigation-fragment:$versions.navigation"
+    implementation "androidx.navigation:navigation-ui:$versions.navigation"
+    implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation"
+    androidTestImplementation "androidx.navigation:navigation-testing:$versions.navigation"
+
     testImplementation "junit:junit:$versions.junit"
     androidTestImplementation "androidx.test.ext:junit:$versions.androidxJunit"
     androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso"
