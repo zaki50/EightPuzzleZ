@@ -1,18 +1,23 @@
 package org.zakky.eightpuzzlez
 
+import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import org.zakky.eightpuzzlez.databinding.FragmentGameBinding
 import kotlin.random.Random
 
-class GameFragment : Fragment() {
+
+class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
     private lateinit var viewModel: GameViewModel
     private lateinit var binding: FragmentGameBinding
 
@@ -88,6 +93,13 @@ class GameFragment : Fragment() {
                         }
 
                         viewModel.puzzle = puzzle
+
+                        if (puzzle.isCleared()) {
+                            GameRepository.get().clearGame()
+                            ResultDialogFragment().also {
+                                it.setTargetFragment(this, -1)
+                            }.show(parentFragmentManager, "dialog")
+                        }
                     }
                 }
             }
@@ -102,7 +114,11 @@ class GameFragment : Fragment() {
     override fun onPause() {
         super.onPause()
 
-        GameRepository.get().saveGame(viewModel.puzzle)
+        if (viewModel.puzzle.isCleared()) {
+            GameRepository.get().clearGame()
+        } else {
+            GameRepository.get().saveGame(viewModel.puzzle)
+        }
     }
 
     companion object {
@@ -145,5 +161,28 @@ class GameFragment : Fragment() {
             targetPanel.translationX = (originX - targetX).toFloat()
             targetPanel.animate().translationX(0f)
         }
+    }
+
+    override fun onDialogOkClicked() {
+        findNavController().navigateUp()
+    }
+}
+
+class ResultDialogFragment : DialogFragment() {
+    interface OnResultDialogListener {
+        fun onDialogOkClicked()
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        // ダイアログ生成  AlertDialogのBuilderクラスを指定してインスタンス化します
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext()).also {
+            it.setTitle(R.string.clear_dialog_title)
+            it.setMessage(R.string.clear_dialog_message)
+        }
+
+        dialogBuilder.setPositiveButton(resources.getString(android.R.string.ok)) { _, _ -> // editTextから値を取得
+            (targetFragment as OnResultDialogListener).onDialogOkClicked()
+        }
+        return dialogBuilder.create()
     }
 }
