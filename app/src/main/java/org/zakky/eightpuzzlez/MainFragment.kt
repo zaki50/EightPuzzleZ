@@ -31,6 +31,7 @@ class MainFragment : Fragment() {
 
     private fun setupButtons() {
         binding.newButton.setOnClickListener {
+            GameRepository.get().clearGame()
             findNavController().navigate(R.id.main_to_game)
         }
         binding.resumeButton.setOnClickListener {

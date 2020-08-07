@@ -32,6 +32,8 @@ class GameRepository(private val pref: SharedPreferences) {
         return EightPuzzle.newInstanceWithState(board, history)
     }
 
+    fun clearGame() = pref.edit().clear().apply()
+
     fun hasSavedGame(): Boolean {
         return pref.contains(KEY_BOARD)
     }
