@@ -29,7 +29,7 @@ class GameFragment : Fragment() {
             } else {
                 EightPuzzle.newInstance().shuffle(Random.Default).also {
                     // onPause() でも保存するが、backした際のMainFragment の onResume() に間に合わないのでここでも保存しておく
-                    GameRepository.get().saveGame(viewModel.puzzle)
+                    GameRepository.get().saveGame(it)
                 }
             }
         }
