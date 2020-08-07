@@ -8,13 +8,6 @@
         android:layout_height="match_parent"
         tools:context=".GameFragment">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/top_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="128dp" />
-
         <!-- アニメーションしたときにブランクパネルが見えるようにするための背景-->
         <ImageView
             android:id="@+id/bg_panel0"
@@ -22,10 +15,12 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toTopOf="@id/bg_panel3"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/bg_panel1"
-            app:layout_constraintTop_toBottomOf="@id/top_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -34,9 +29,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toTopOf="@id/bg_panel4"
             app:layout_constraintLeft_toRightOf="@id/bg_panel0"
             app:layout_constraintRight_toLeftOf="@id/bg_panel2"
-            app:layout_constraintTop_toBottomOf="@id/top_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -45,9 +42,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toTopOf="@id/bg_panel5"
             app:layout_constraintLeft_toRightOf="@id/bg_panel1"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/top_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -56,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toTopOf="@id/bg_panel6"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/bg_panel4"
@@ -68,6 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toTopOf="@id/bg_panel7"
             app:layout_constraintLeft_toRightOf="@id/bg_panel3"
             app:layout_constraintRight_toLeftOf="@id/bg_panel5"
             app:layout_constraintTop_toBottomOf="@id/bg_panel1"
@@ -79,6 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toTopOf="@id/bg_panel8"
             app:layout_constraintLeft_toRightOf="@id/bg_panel4"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bg_panel2"
@@ -90,6 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/bg_panel7"
@@ -102,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/bg_panel6"
             app:layout_constraintRight_toLeftOf="@id/bg_panel8"
             app:layout_constraintTop_toBottomOf="@id/bg_panel4"
@@ -113,6 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:src="@mipmap/blank"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/bg_panel7"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bg_panel5"
@@ -125,10 +130,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toTopOf="@id/panel3"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/panel1"
-            app:layout_constraintTop_toBottomOf="@id/top_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="ContentDescription"
             tools:src="@mipmap/num1" />
 
@@ -137,9 +144,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toTopOf="@id/panel4"
             app:layout_constraintLeft_toRightOf="@id/panel0"
             app:layout_constraintRight_toLeftOf="@id/panel2"
-            app:layout_constraintTop_toBottomOf="@id/top_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="ContentDescription"
             tools:src="@mipmap/num2" />
 
@@ -148,9 +157,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toTopOf="@id/panel5"
             app:layout_constraintLeft_toRightOf="@id/panel1"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/top_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="ContentDescription"
             tools:src="@mipmap/num3" />
 
@@ -159,6 +170,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toTopOf="@id/panel6"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/panel4"
@@ -171,6 +183,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toTopOf="@id/panel7"
             app:layout_constraintLeft_toRightOf="@id/panel3"
             app:layout_constraintRight_toLeftOf="@id/panel5"
             app:layout_constraintTop_toBottomOf="@id/panel1"
@@ -182,6 +195,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toTopOf="@id/panel8"
             app:layout_constraintLeft_toRightOf="@id/panel4"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/panel2"
@@ -193,6 +207,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/panel7"
@@ -205,6 +220,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/panel6"
             app:layout_constraintRight_toLeftOf="@id/panel8"
             app:layout_constraintTop_toBottomOf="@id/panel4"
@@ -216,6 +232,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/panel7"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/panel5"
