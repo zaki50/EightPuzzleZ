@@ -70,6 +70,13 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         return true
     }
 
+    fun lastMoved(): Int {
+        if (history.isEmpty()) {
+            throw NoSuchElementException("history is empty.")
+        }
+        return history[history.lastIndex]
+    }
+
     companion object {
         const val PANEL_COUNT = 9
 

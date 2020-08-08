@@ -2,40 +2,59 @@ package org.zakky.eightpuzzlez
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class GameRepository(private val pref: SharedPreferences) {
+class GameRepository @VisibleForTesting constructor(
+    private val pref: SharedPreferences,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) {
 
-    fun saveGame(puzzle: EightPuzzle) {
-        val board = IntArray(EightPuzzle.PANEL_COUNT)
-        puzzle.fillBoardState(board)
+    suspend fun saveGame(puzzle: EightPuzzle) {
+        withContext(dispatcher) {
+            val board = IntArray(EightPuzzle.PANEL_COUNT)
+            puzzle.fillBoardState(board)
 
-        val boardBuilder = StringBuilder(board.size)
-        for (number in board) {
-            boardBuilder.append((number + '0'.toInt()).toChar())
+            val boardBuilder = StringBuilder(board.size)
+            for (number in board) {
+                @Suppress("BlockingMethodInNonBlockingContext")
+                boardBuilder.append((number + '0'.toInt()).toChar())
+            }
+            val historyBuilder = StringBuilder(puzzle.historySize)
+            for (number in puzzle.historyIterator) {
+                @Suppress("BlockingMethodInNonBlockingContext")
+                historyBuilder.append((number + '0'.toInt()).toChar())
+            }
+            pref.edit()
+                .putString(KEY_BOARD, boardBuilder.toString())
+                .putString(KEY_MOVE_HISTORY, historyBuilder.toString())
+                .apply()
         }
-        val historyBuilder = StringBuilder(puzzle.historySize)
-        for (number in puzzle.historyIterator) {
-            historyBuilder.append((number + '0'.toInt()).toChar())
-        }
-        pref.edit()
-            .putString(KEY_BOARD, boardBuilder.toString())
-            .putString(KEY_MOVE_HISTORY, historyBuilder.toString())
-            .apply()
     }
 
-    fun loadGame(): EightPuzzle {
-        val boardStr = pref.getString(KEY_BOARD, "")
-        val historyStr = pref.getString(KEY_MOVE_HISTORY, "")
+    suspend fun loadGame(): EightPuzzle {
+        return withContext(dispatcher) {
+            val boardStr = pref.getString(KEY_BOARD, "")
+            val historyStr = pref.getString(KEY_MOVE_HISTORY, "")
 
-        val board = parseBoardString(boardStr)
-        val history = parseHistoryString(historyStr)
-        return EightPuzzle.newInstanceWithState(board, history)
+            val board = parseBoardString(boardStr)
+            val history = parseHistoryString(historyStr)
+            EightPuzzle.newInstanceWithState(board, history)
+        }
     }
 
-    fun clearGame() = pref.edit().clear().apply()
+    suspend fun clearGame() {
+        withContext(dispatcher) {
+            pref.edit().clear().apply()
+        }
+    }
 
-    fun hasSavedGame(): Boolean {
-        return pref.contains(KEY_BOARD)
+    suspend fun hasSavedGame(): Boolean {
+        return withContext(dispatcher) {
+            pref.contains(KEY_BOARD)
+        }
     }
 
     companion object {

@@ -11,8 +11,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 import org.zakky.eightpuzzlez.databinding.FragmentGameBinding
 import kotlin.random.Random
 
@@ -21,23 +22,76 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
     private lateinit var viewModel: GameViewModel
     private lateinit var binding: FragmentGameBinding
 
+    private lateinit var move: LiveData<Pair<EightPuzzle.MoveDirection, EightPuzzle>>
+
     private val panels: MutableList<ImageView> = ArrayList(EightPuzzle.PANEL_COUNT)
     private val images: MutableList<Drawable> = ArrayList(EightPuzzle.PANEL_COUNT)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
-        if (savedInstanceState == null) {
-            viewModel.puzzle = if (GameRepository.get().hasSavedGame()) {
-                GameRepository.get().loadGame()
-            } else {
-                EightPuzzle.newInstance().shuffle(Random.Default).also {
-                    // onPause() でも保存するが、backした際のMainFragment の onResume() に間に合わないのでここでも保存しておく
-                    GameRepository.get().saveGame(it)
+        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return when (modelClass) {
+                    GameViewModel::class.java -> GameViewModel(
+                        GameRepository.get(),
+                        RankingRepository.get()
+                    ) as T
+                    else -> throw AssertionError()
                 }
             }
+        }).get(GameViewModel::class.java)
+        viewModel.puzzle.let { initialPuzzleLiveData ->
+            initialPuzzleLiveData.observe(this, object : Observer<EightPuzzle> {
+                override fun onChanged(loadedPuzzle: EightPuzzle) {
+                    initialPuzzleLiveData.removeObserver(this)
+
+                    updateDescription(loadedPuzzle)
+
+                    val moveSink = MutableLiveData<Pair<EightPuzzle.MoveDirection, EightPuzzle>>()
+                    move = moveSink
+                    move.observe(this@GameFragment) { (_, puzzleAfterMove) ->
+                        updateDescription(puzzleAfterMove)
+
+                        val board = IntArray(EightPuzzle.PANEL_COUNT).also { array ->
+                            puzzleAfterMove.fillBoardState(array)
+                        }
+
+                        val lastMovedNum = puzzleAfterMove.lastMoved()
+                        val indexOfEmpty = board.indexOf(0)
+                        val indexOfMoved = board.indexOf(lastMovedNum)
+
+                        panels[indexOfEmpty].setImageDrawable(images[0])
+                        panels[indexOfMoved].setImageDrawable(images[lastMovedNum])
+                        animatePanel(panels[indexOfMoved], from = panels[indexOfEmpty])
+
+                        if (puzzleAfterMove.isCleared()) {
+                            viewModel.clearGameData()
+                            viewModel.addRankingData(
+                                Ranking(
+                                    puzzleAfterMove.historySize,
+                                    System.currentTimeMillis()
+                                )
+                            )
+                            ResultDialogFragment().also { dialogFragment ->
+                                dialogFragment.setTargetFragment(this@GameFragment, -1)
+                            }.show(parentFragmentManager, "dialog")
+                        } else {
+                            viewModel.saveGame(puzzleAfterMove)
+                        }
+                    }
+
+                    initPanels(binding, loadedPuzzle, moveSink)
+                }
+            })
         }
+        viewModel.fetchPuzzle()
+    }
+
+    private fun updateDescription(puzzle: EightPuzzle) {
+        binding.boardDescription.text =
+            resources.getString(R.string.board_description, puzzle.historySize)
     }
 
     override fun onCreateView(
@@ -49,18 +103,16 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
         }
 
         return FragmentGameBinding.inflate(layoutInflater, container, false).let {
-            initPanels(it)
             binding = it
-            setBoardDescription()
             it.root
         }
     }
 
-    private fun setBoardDescription() {
-        binding.boardDescription.text = resources.getString(R.string.board_description, viewModel.puzzle.historySize)
-    }
-
-    private fun initPanels(binding: FragmentGameBinding) {
+    private fun initPanels(
+        binding: FragmentGameBinding,
+        initialPuzzle: EightPuzzle,
+        moveData: MutableLiveData<Pair<EightPuzzle.MoveDirection, EightPuzzle>>
+    ) {
         panels.add(binding.panel0)
         panels.add(binding.panel1)
         panels.add(binding.panel2)
@@ -72,42 +124,15 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
         panels.add(binding.panel8)
 
         val board =
-            IntArray(EightPuzzle.PANEL_COUNT).also { viewModel.puzzle.fillBoardState(it) }
+            IntArray(EightPuzzle.PANEL_COUNT).also { initialPuzzle.fillBoardState(it) }
         for (index in 0 until panels.size) {
             val num = board[index]
             panels[index].setImageDrawable(images[num])
             panels[index].setOnClickListener {
-                val (puzzle, direction) = viewModel.puzzle.move(index)
-                direction?.let {
-                    panels[index].setImageDrawable(images[0])
-                    panels[index + direction.offset].let { moveTargetPanel ->
-                        moveTargetPanel.setImageDrawable(images[puzzle.numberAt(index + direction.offset)])
-                        when (direction) {
-                            EightPuzzle.MoveDirection.UP -> {
-                                animateVertically(panels[index], moveTargetPanel)
-                            }
-                            EightPuzzle.MoveDirection.DOWN -> {
-                                animateVertically(panels[index], moveTargetPanel)
-                            }
-                            EightPuzzle.MoveDirection.LEFT -> {
-                                animateHorizontally(panels[index], moveTargetPanel)
-                            }
-                            EightPuzzle.MoveDirection.RIGHT -> {
-                                animateHorizontally(panels[index], moveTargetPanel)
-                            }
-                        }
-
-                        viewModel.puzzle = puzzle
-
-                        setBoardDescription()
-
-                        if (puzzle.isCleared()) {
-                            GameRepository.get().clearGame()
-                            RankingRepository.get().add(Ranking(puzzle.historySize, System.currentTimeMillis()))
-                            ResultDialogFragment().also {
-                                it.setTargetFragment(this, -1)
-                            }.show(parentFragmentManager, "dialog")
-                        }
+                getLatestPuzzle()?.let { puzzleBeforeMove ->
+                    val (puzzleAfterMove, direction) = puzzleBeforeMove.move(index)
+                    direction?.let {
+                        moveData.postValue(Pair(direction, puzzleAfterMove))
                     }
                 }
             }
@@ -117,16 +142,6 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        if (viewModel.puzzle.isCleared()) {
-            GameRepository.get().clearGame()
-        } else {
-            GameRepository.get().saveGame(viewModel.puzzle)
-        }
     }
 
     companion object {
@@ -142,37 +157,26 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
             R.mipmap.num8,
         )
 
-        private fun animateVertically(originPanel: View, targetPanel: View) {
+        private fun animatePanel(target: View, from: View) {
             val location = IntArray(2)
-            val targetY = location.let {
-                targetPanel.getLocationInWindow(location)
-                location[1]
+            val (targetX, targetY) = location.also {
+                target.getLocationInWindow(location)
             }
-            val originY = location.let {
-                originPanel.getLocationInWindow(location)
-                location[1]
+            val (fromX, fromY) = location.also {
+                from.getLocationInWindow(location)
             }
-            targetPanel.translationY = (originY - targetY).toFloat()
-            targetPanel.animate().translationY(0f)
-        }
-
-        private fun animateHorizontally(originPanel: View, targetPanel: View) {
-            val location = IntArray(2)
-            val targetX = location.let {
-                targetPanel.getLocationInWindow(location)
-                location[0]
-            }
-            val originX = location.let {
-                originPanel.getLocationInWindow(location)
-                location[0]
-            }
-            targetPanel.translationX = (originX - targetX).toFloat()
-            targetPanel.animate().translationX(0f)
+            target.translationX = (fromX - targetX).toFloat()
+            target.translationY = (fromY - targetY).toFloat()
+            target.animate().translationX(0f).translationY(0f)
         }
     }
 
     override fun onDialogOkClicked() {
         findNavController().navigateUp()
+    }
+
+    private fun getLatestPuzzle(): EightPuzzle? {
+        return move.value?.second ?: viewModel.puzzle.value
     }
 }
 
@@ -192,5 +196,47 @@ class ResultDialogFragment : DialogFragment() {
             (targetFragment as OnResultDialogListener).onDialogOkClicked()
         }
         return dialogBuilder.create()
+    }
+}
+
+class GameViewModel(
+    private val gameRepo: GameRepository,
+    private val rankingRepo: RankingRepository,
+) : ViewModel() {
+
+    private val _puzzle = MutableLiveData<EightPuzzle>()
+
+    val puzzle: LiveData<EightPuzzle>
+        get() = _puzzle
+
+    fun fetchPuzzle() {
+        viewModelScope.launch {
+            val puzzle = if (gameRepo.hasSavedGame()) {
+                gameRepo.loadGame()
+            } else {
+                EightPuzzle.newInstance().shuffle(Random.Default).also {
+                    GameRepository.get().saveGame(it)
+                }
+            }
+            _puzzle.postValue(puzzle)
+        }
+    }
+
+    fun clearGameData() {
+        viewModelScope.launch {
+            gameRepo.clearGame()
+        }
+    }
+
+    fun saveGame(puzzle: EightPuzzle) {
+        viewModelScope.launch {
+            gameRepo.saveGame(puzzle)
+        }
+    }
+
+    fun addRankingData(ranking: Ranking) {
+        viewModelScope.launch {
+            rankingRepo.add(ranking)
+        }
     }
 }
