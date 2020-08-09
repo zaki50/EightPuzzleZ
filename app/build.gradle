@@ -5,6 +5,8 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 
+apply plugin: 'org.jetbrains.dokka'
+
 apply plugin: 'ext-properties'
 
 android {

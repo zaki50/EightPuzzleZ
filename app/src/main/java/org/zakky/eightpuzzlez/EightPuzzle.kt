@@ -2,6 +2,22 @@ package org.zakky.eightpuzzlez
 
 import kotlin.random.Random
 
+/**
+ * 8パズルの盤面とそれに対する操作を提供するクラス。
+ *
+ * このクラスはimmutableです。盤面に対する操作を行うと、操作後の新たな盤面を表す
+ * インスタンスを生成して返します。
+ *
+ * ブランク以外はその数値で、ブランクは 0 で表します。
+ *
+ * このクラスで使用する index は、盤面の以下の位置に対応します。
+ *
+ * ```
+ * |0|1|2|
+ * |3|4|5|
+ * |6|7|8|
+ * ```
+ */
 class EightPuzzle private constructor(private val board: IntArray, private val history: IntArray) {
 
     val historySize: Int
@@ -10,6 +26,9 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
     val historyIterator: IntIterator
         get() = history.iterator()
 
+    /**
+     * moveを行った際にどの方向に動いたかを表します。
+     */
     enum class MoveDirection(val offset: Int) {
         UP(-3),
         DOWN(3),
@@ -17,15 +36,35 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         LEFT(-1),
     }
 
+    /**
+     * 指定された場所の番号を返します。
+     *
+     * @param index 番号を取得したい場所。
+     * @return 指定された場所に存在する番号を返します。ブランクの場合は 0 を返します。
+     * @throws ArrayIndexOutOfBoundsException indexが範囲外の場合
+     */
     fun numberAt(index: Int): Int = board[index]
 
+    /**
+     * 渡された配列に現状の盤面の情報をコピーします。
+     *
+     * @param to コピー先の配列。長さは[PANEL_COUNT]と一致している必要があります。
+     * @throws IllegalArgumentException [to]の長さが[PANEL_COUNT]と一致しない場合。
+     */
     fun fillBoardState(to: IntArray) {
         if (to.size != PANEL_COUNT) {
-            throw java.lang.IllegalArgumentException("invalid length of target array: ${to.size}")
+            throw IllegalArgumentException("invalid length of target array: ${to.size}")
         }
         board.copyInto(to)
     }
 
+    /**
+     * 数字をシャッフルした盤面を表すインスタンスを生成して返します。
+     * 履歴はクリアされます。
+     *
+     * @param random 乱数生成機
+     * @return 生成された盤面を表すインスタンス
+     */
     fun shuffle(random: Random): EightPuzzle {
         val newBoard = board.toMutableList()
         var newBoardArray: IntArray
@@ -36,6 +75,14 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         return EightPuzzle(newBoardArray, intArrayOf())
     }
 
+    /**
+     * 指定されたインデックスの場所に存在する数字を動かした後の盤面を表すインスタンスを
+     * 生成して返します。
+     *
+     * @param index 動かす数の場所
+     * @return 動かした後の盤面と移動方向。移動できない場合は [MoveDirection]をnullで返します。
+     * @throws ArrayIndexOutOfBoundsException [index]が範囲外の場合
+     */
     fun move(index: Int): Pair<EightPuzzle, MoveDirection?> {
         val newBoard = board.copyOf()
         val direction = move(newBoard, index, true)
@@ -51,6 +98,12 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         )
     }
 
+    /**
+     * 履歴の最後にある数字を動かし、履歴をひとつ削った盤面のインスタンスを返します。
+     *
+     * @return ひとつ前の盤面を表すインスタンス
+     * @throws IllegalStateException 履歴が空の場合
+     */
     fun moveBack(): EightPuzzle {
         if (history.isEmpty()) {
             throw IllegalStateException("history is empty")
@@ -65,8 +118,19 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         return EightPuzzle(newBoard, newHistory)
     }
 
+    /**
+     * 現状の盤面がクリア状態になっているかを返します。
+     *
+     * @return クリア盤面の場合は true
+     */
     fun isCleared(): Boolean = isClearedBoard(board)
 
+    /**
+     * 最後に動かした番号を返します。
+     *
+     * @return 最後に動かした番号
+     * @throws NoSuchElementException 履歴が空の場合
+     */
     fun lastMoved(): Int {
         if (history.isEmpty()) {
             throw NoSuchElementException("history is empty.")
@@ -77,6 +141,11 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
     companion object {
         const val PANEL_COUNT = 9
 
+        /**
+         * クリア状態の盤面で履歴が空のインスタンスを返します。
+         *
+         * @return クリア状態のインスタンス
+         */
         fun newInstance(): EightPuzzle {
             // board = intArrayOf(1, 2, 3, ..., 0)
             val board = IntArray(PANEL_COUNT) { index -> (index + 1) % PANEL_COUNT }
@@ -85,6 +154,15 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
             return EightPuzzle(board, history)
         }
 
+        /**
+         * 指定された履歴と盤面を持つインスタンスを生成して返します。
+         *
+         * [board]で指定された盤面がクリア可能なものであるか、存在しない番号が履歴に含まれていないか、
+         * 履歴に含まれる操作が可能なものになっているかのチェックを行います。
+         *
+         * @param board 最新の盤面を表す配列
+         * @param history 履歴を表す配列。要素は動かした番号です。先頭の要素が一番古い操作、末尾の要素が最後の操作です
+         */
         fun newInstanceWithState(
             board: IntArray,
             history: IntArray,
