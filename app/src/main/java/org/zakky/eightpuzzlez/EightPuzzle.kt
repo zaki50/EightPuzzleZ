@@ -38,12 +38,16 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
 
     fun move(index: Int): Pair<EightPuzzle, MoveDirection?> {
         val newBoard = board.copyOf()
-        val direction = move(newBoard, index, true) ?: return Pair(this, null)
+        val direction = move(newBoard, index, true)
 
         return Pair(
-            EightPuzzle(
-                newBoard,
-                history.copyOf(historySize + 1).also { it[historySize] = board[index] }), direction
+            if (direction == null)
+                this
+            else
+                EightPuzzle(
+                    newBoard,
+                    history.copyOf(historySize + 1).also { it[historySize] = board[index] }),
+            direction,
         )
     }
 
