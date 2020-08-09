@@ -140,6 +140,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
 
     companion object {
         const val PANEL_COUNT = 9
+        private const val WIDTH = 3
 
         /**
          * クリア状態の盤面で履歴が空のインスタンスを返します。
@@ -224,8 +225,8 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
             }
             val indexOfEmpty = board.indexOf(0)
             return when (indexOfEmpty - index) {
-                MoveDirection.LEFT.offset -> MoveDirection.LEFT
-                MoveDirection.RIGHT.offset -> MoveDirection.RIGHT
+                MoveDirection.LEFT.offset -> if (index % WIDTH == 0) null else MoveDirection.LEFT
+                MoveDirection.RIGHT.offset -> if (index % WIDTH == (WIDTH - 1)) null else MoveDirection.RIGHT
                 MoveDirection.UP.offset -> MoveDirection.UP
                 MoveDirection.DOWN.offset -> MoveDirection.DOWN
                 else -> null
