@@ -5,30 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.fragment.app.viewModels
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.zakky.eightpuzzlez.databinding.FragmentMainBinding
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: FragmentMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return when (modelClass) {
-                    MainViewModel::class.java -> MainViewModel(
-                        GameRepository.get(),
-                        RankingRepository.get()
-                    ) as T
-                    else -> throw AssertionError()
-                }
-            }
-        }).get(MainViewModel::class.java)
         viewModel.hasSavedGame.observe(this) { newValue ->
             binding.resumeButton.isEnabled = newValue
         }
@@ -74,7 +69,7 @@ class MainFragment : Fragment() {
     }
 }
 
-class MainViewModel(
+class MainViewModel @ViewModelInject constructor(
     private val gameRepo: GameRepository,
     private val rankingRepo: RankingRepository,
 ) : ViewModel() {

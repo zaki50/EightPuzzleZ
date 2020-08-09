@@ -1,13 +1,7 @@
 package org.zakky.eightpuzzlez
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class MyApplication : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-
-        GameRepository.init(this)
-        RankingRepository.init(this)
-    }
-}
+@HiltAndroidApp
+class MyApplication : Application()

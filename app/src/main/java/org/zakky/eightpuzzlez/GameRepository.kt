@@ -1,13 +1,11 @@
 package org.zakky.eightpuzzlez
 
-import android.content.Context
 import android.content.SharedPreferences
-import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GameRepository @VisibleForTesting constructor(
+class GameRepository internal constructor(
     private val pref: SharedPreferences,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
@@ -58,17 +56,10 @@ class GameRepository @VisibleForTesting constructor(
     }
 
     companion object {
+        const val PREF_NAME = "game_state"
+
         private const val KEY_BOARD = "board"
         private const val KEY_MOVE_HISTORY = "move_history"
-
-        // TODO DIを導入して管理する
-        private lateinit var instance: GameRepository
-        fun init(context: Context) {
-            instance =
-                GameRepository(context.getSharedPreferences("game_state", Context.MODE_PRIVATE))
-        }
-
-        fun get() = instance
 
         private fun parseBoardString(boardStr: String?): IntArray {
             if (boardStr == null || boardStr.length != EightPuzzle.PANEL_COUNT) {

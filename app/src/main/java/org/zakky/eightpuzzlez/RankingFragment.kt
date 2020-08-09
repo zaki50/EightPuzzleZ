@@ -5,30 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import androidx.fragment.app.viewModels
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.zakky.eightpuzzlez.databinding.FragmentRankingBinding
 
+@AndroidEntryPoint
 class RankingFragment : Fragment() {
-    private lateinit var viewModel: RankingViewModel
+    private val viewModel: RankingViewModel by viewModels()
     private lateinit var binding: FragmentRankingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return when (modelClass) {
-                    RankingViewModel::class.java -> RankingViewModel(
-                        RankingRepository.get()
-                    ) as T
-                    else -> throw AssertionError()
-                }
-            }
-        }).get(RankingViewModel::class.java)
 
         viewModel.rankingList.observe(this) {
             // TODO リストをUIに表示する
@@ -51,9 +44,8 @@ class RankingFragment : Fragment() {
     }
 }
 
-class RankingViewModel(
+class RankingViewModel @ViewModelInject constructor(
     private val repository: RankingRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val _rankingList = MutableLiveData<List<Ranking>>()
 

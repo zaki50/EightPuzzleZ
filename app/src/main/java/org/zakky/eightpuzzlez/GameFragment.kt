@@ -11,15 +11,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.zakky.eightpuzzlez.databinding.FragmentGameBinding
 import kotlin.random.Random
 
 
+@AndroidEntryPoint
 class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
-    private lateinit var viewModel: GameViewModel
+    private val viewModel: GameViewModel by viewModels()
     private lateinit var binding: FragmentGameBinding
 
     private lateinit var move: LiveData<Pair<EightPuzzle.MoveDirection, EightPuzzle>>
@@ -30,18 +34,6 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return when (modelClass) {
-                    GameViewModel::class.java -> GameViewModel(
-                        GameRepository.get(),
-                        RankingRepository.get()
-                    ) as T
-                    else -> throw AssertionError()
-                }
-            }
-        }).get(GameViewModel::class.java)
         viewModel.puzzle.let { initialPuzzleLiveData ->
             initialPuzzleLiveData.observe(this, object : Observer<EightPuzzle> {
                 override fun onChanged(loadedPuzzle: EightPuzzle) {
@@ -139,11 +131,6 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
-    }
-
     companion object {
         private val NUM_IMAGE_IDS = intArrayOf(
             R.mipmap.transparent,
@@ -199,7 +186,7 @@ class ResultDialogFragment : DialogFragment() {
     }
 }
 
-class GameViewModel(
+class GameViewModel @ViewModelInject constructor(
     private val gameRepo: GameRepository,
     private val rankingRepo: RankingRepository,
 ) : ViewModel() {
@@ -215,7 +202,7 @@ class GameViewModel(
                 gameRepo.loadGame()
             } else {
                 EightPuzzle.newInstance().shuffle(Random.Default).also {
-                    GameRepository.get().saveGame(it)
+                    gameRepo.saveGame(it)
                 }
             }
             _puzzle.postValue(puzzle)

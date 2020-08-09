@@ -1,15 +1,13 @@
 package org.zakky.eightpuzzlez
 
-import android.content.Context
 import android.content.SharedPreferences
-import androidx.annotation.VisibleForTesting
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RankingRepository @VisibleForTesting constructor(
+class RankingRepository internal constructor(
     private val pref: SharedPreferences,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
@@ -72,16 +70,9 @@ class RankingRepository @VisibleForTesting constructor(
     }
 
     companion object {
+        const val PREF_NAME = "ranking"
+
         private const val KEY_RANKING = "ranking"
-
-        // TODO DIを導入して管理する
-        private lateinit var instance: RankingRepository
-        fun init(context: Context) {
-            instance =
-                RankingRepository(context.getSharedPreferences("ranking", Context.MODE_PRIVATE))
-        }
-
-        fun get() = instance
     }
 }
 
