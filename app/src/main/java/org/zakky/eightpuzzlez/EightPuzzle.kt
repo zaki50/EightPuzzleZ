@@ -250,7 +250,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         /**
          * クリア可能な盤面かどうかの判定
          *
-         * 置換の偶奇とblankの最終位置までの距離の偶奇が一致していればクリア可能
+         * クリア盤面にするための置換の偶奇とblankの最終位置までの距離の偶奇が一致していればクリア可能
          *
          * 参考: https://mathtrain.jp/8puzzle
          */
