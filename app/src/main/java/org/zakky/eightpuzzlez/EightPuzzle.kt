@@ -91,7 +91,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
      */
     fun move(index: Int): Pair<EightPuzzle, MoveDirection?> {
         val newBoard = board.copyOf()
-        val direction = move(newBoard, index, true)
+        val direction = move(newBoard, index)
 
         return Pair(
             if (direction == null)
@@ -116,7 +116,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
         }
 
         val newBoard = board.copyOf()
-        move(newBoard, newBoard.indexOf(history[history.size - 1]), true)
+        move(newBoard, newBoard.indexOf(history[history.size - 1]))
             ?: throw IllegalStateException("failed to move back to previous board")
 
         // 最後の履歴を削除しながら複製する
@@ -212,18 +212,16 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
             val currentBoard = originalBoard.copyOf()
             for (movedNumber in history.reversed()) {
                 val targetIndex = currentBoard.indexOf(movedNumber)
-                if (move(currentBoard, targetIndex, true) == null) {
+                if (move(currentBoard, targetIndex) == null) {
                     return false
                 }
             }
             return true
         }
 
-        @Suppress("SameParameterValue")
         private fun move(
             board: IntArray,
             index: Int,
-            updateBoard: Boolean = false,
         ): MoveDirection? {
             val movedNumber = board[index]
             if (movedNumber == 0) {
@@ -237,7 +235,7 @@ class EightPuzzle private constructor(private val board: IntArray, private val h
                 MoveDirection.DOWN.offset -> MoveDirection.DOWN
                 else -> null
             }.also {
-                if (updateBoard && it != null) {
+                if (it != null) {
                     board[indexOfEmpty] = movedNumber
                     board[index] = 0
                 }
