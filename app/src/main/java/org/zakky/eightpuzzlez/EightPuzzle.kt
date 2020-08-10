@@ -20,9 +20,15 @@ import kotlin.random.Random
  */
 class EightPuzzle private constructor(private val board: IntArray, private val history: IntArray) {
 
+    /**
+     * 履歴に幾つ要素が保持されているか
+     */
     val historySize: Int
         get() = history.size
 
+    /**
+     * 履歴の要素を古い手から順に返すイテレーター
+     */
     val historyIterator: IntIterator
         get() = history.iterator()
 
