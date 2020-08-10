@@ -1,5 +1,6 @@
 package org.zakky.eightpuzzlez
 
+import android.app.Application
 import android.app.Dialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -13,13 +14,17 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.zakky.eightpuzzlez.databinding.FragmentGameBinding
+import javax.inject.Inject
 import kotlin.random.Random
-
 
 @AndroidEntryPoint
 class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
@@ -31,8 +36,15 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
     private val panels: MutableList<ImageView> = ArrayList(EightPuzzle.PANEL_COUNT)
     private val images: MutableList<Drawable> = ArrayList(EightPuzzle.PANEL_COUNT)
 
+    @Inject
+    lateinit var app: Application
+
+    private lateinit var numImageIds: IntArray
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        initNumImageIds()
 
         viewModel.puzzle.let { initialPuzzleLiveData ->
             initialPuzzleLiveData.observe(this, object : Observer<EightPuzzle> {
@@ -81,6 +93,16 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
         viewModel.fetchPuzzle()
     }
 
+    private fun initNumImageIds() {
+        numImageIds = IntArray(EightPuzzle.PANEL_COUNT)
+
+        val res = resources
+        for (i in 0 until EightPuzzle.PANEL_COUNT) {
+            numImageIds[i] =
+                res.getIdentifier(if (i == 0) "transparent" else "num$i", "mipmap", app.packageName)
+        }
+    }
+
     private fun updateDescription(puzzle: EightPuzzle) {
         binding.boardDescription.text =
             resources.getString(R.string.board_description, puzzle.historySize)
@@ -90,7 +112,7 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        for (imageId in NUM_IMAGE_IDS) {
+        for (imageId in numImageIds) {
             images.add(ResourcesCompat.getDrawable(resources, imageId, activity?.theme)!!)
         }
 
@@ -132,17 +154,6 @@ class GameFragment : Fragment(), ResultDialogFragment.OnResultDialogListener {
     }
 
     companion object {
-        private val NUM_IMAGE_IDS = intArrayOf(
-            R.mipmap.transparent,
-            R.mipmap.num1,
-            R.mipmap.num2,
-            R.mipmap.num3,
-            R.mipmap.num4,
-            R.mipmap.num5,
-            R.mipmap.num6,
-            R.mipmap.num7,
-            R.mipmap.num8,
-        )
 
         private fun animatePanel(target: View, from: View) {
             val location = IntArray(2)
